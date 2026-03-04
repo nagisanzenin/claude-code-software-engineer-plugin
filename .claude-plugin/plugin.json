@@ -1,0 +1,10 @@
+{
+  "name": "software-engineer",
+  "description": "Production-grade service implementation with clean architecture, payment integration, and autonomous debugging",
+  "version": "1.0.0",
+  "author": {
+    "name": "nagisanzenin"
+  },
+  "license": "MIT",
+  "keywords": ["software-engineer", "backend", "clean-architecture", "services", "debugging"]
+}
