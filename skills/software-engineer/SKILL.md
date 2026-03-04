@@ -21,55 +21,41 @@ Production-grade service implementation engine: reads the Solution Architect's o
 
 ## User Experience Protocol
 
-This skill runs as a **fully autonomous, continuous pipeline** in the terminal. The user experience is:
+**CRITICAL: Follow these rules for ALL user interactions.**
 
-### Continuous Execution
-- Once invoked, work continuously until the task is **fully complete** or the user intercepts with ESC
-- Never stop to ask "should I continue?" — just keep going
-- If the user presses ESC, pause gracefully and accept additional input before resuming
+### RULE 1: NEVER Ask Open-Ended Questions
+**NEVER output text expecting the user to type.** Every user interaction MUST use `AskUserQuestion` with predefined options. Users navigate with arrow keys (up/down) and press Enter.
 
-### Real-Time Terminal Updates
-- **Constantly update the user** on what you're doing in the terminal
-- Show progress at every meaningful step: "Setting up project structure...", "Writing API routes...", "Running tests..."
-- After completing a sub-task, give a **one-line status**: "✓ Database schema created (9 tables)"
-- Use clear section headers when transitioning between phases
-- Never go silent for long periods — if a step takes time, say what you're waiting for
+**WRONG:** "What do you think?" / "Do you approve?" / "Any feedback?"
+**RIGHT:** Use AskUserQuestion with 2-4 options + "Chat about this" as last option.
 
-### User Input: Multiple Choice Only
-- When user input is needed, **always use AskUserQuestion with predefined options**
-- Users navigate options with **arrow keys (up/down)** and select with Enter
-- **Always include "Chat about this" as the last option** — this lets the user type free-form input instead of picking a preset
-- Keep options to 2-4 choices (plus "Chat about this")
-- Front-load the recommended option first with "(Recommended)" suffix
-- Example:
-  ```
-  Which database should we use?
-  → PostgreSQL (Recommended)
-    MySQL
-    SQLite
-    Chat about this
-  ```
+### RULE 2: "Chat about this" Always Last
+Every `AskUserQuestion` MUST have `"Chat about this"` as the last option — the user's escape hatch for free-form typing.
 
-### Progress Format
-Use this format for terminal output:
+### RULE 3: Recommended Option First
+First option = recommended default with `(Recommended)` suffix.
+
+### RULE 4: Continuous Execution
+Work continuously until task complete or user presses ESC. Never ask "should I continue?" — just keep going.
+
+### RULE 5: Real-Time Terminal Updates
+Constantly print progress. Never go silent.
 ```
-━━━ Phase N: [Phase Name] ━━━━━━━━━━━━━━━━━━━━━━
-[description of what's happening]
+━━━ [Phase/Task Name] ━━━━━━━━━━━━━━━━━━━━━━
 
-✓ Step completed (details)
-✓ Step completed (details)
 ⧖ Working on [current step]...
+✓ Step completed (details)
+✓ Step completed (details)
 
-━━━ Phase N Complete ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Summary: [1-2 line summary of what was produced]
+━━━ Complete ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Summary: [what was produced]
 ```
 
-### Autonomy Rules
-1. **Default to sensible choices** — don't ask the user for every minor decision
-2. **Only ask at strategic gates** — major architectural decisions, approval checkpoints
-3. **Self-resolve issues** — if something breaks, debug and fix it before bothering the user
-4. **Report, don't ask** — "I chose PostgreSQL because [reason]" is better than "Which database?"
-5. **Batch questions** — if you need multiple inputs, ask them together, not one at a time
+### RULE 6: Autonomy
+1. Default to sensible choices — minimize questions
+2. Self-resolve issues — debug and fix before asking user
+3. Report decisions made, don't ask for permission on minor choices
+4. Only use AskUserQuestion for major decisions or approval gates
 
 ## Pipeline Position
 
